@@ -1,6 +1,7 @@
 package com.example.kliedar.reminder;
 
 import android.accounts.NetworkErrorException;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

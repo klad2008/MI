@@ -1,8 +1,10 @@
 package com.example.kliedar.reminder;
 
+import android.accounts.NetworkErrorException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,6 +27,8 @@ public class LogInTab extends AppCompatActivity {
         String content = "";
         content = content + "userID=" + UserIDText.getText() + "&";
         content = content + "password=" + PasswordText.getText();
+        Log.v("log-url", url);
+        Log.v("content", content);
         return NetUtils.post(url, content);
     }
 
@@ -38,6 +42,8 @@ public class LogInTab extends AppCompatActivity {
                             public void run(){
                                 String Tmp = logIn();
                                 try {
+                                    if (Tmp == null)
+                                        throw new NetworkErrorException("未能连接到服务器");
                                     JSONObject json = new JSONObject(Tmp);
                                     int stat = Integer.parseInt(json.getString("errCode"));
                                     switch (stat){
@@ -58,6 +64,9 @@ public class LogInTab extends AppCompatActivity {
                                     }
                                 } catch (JSONException e) {
                                     Status = "json解析失败 : " + Tmp;
+                                    e.printStackTrace();
+                                } catch (NetworkErrorException e) {
+                                    Status = e.toString();
                                     e.printStackTrace();
                                 }
                                 runOnUiThread(new Runnable() {
