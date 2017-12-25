@@ -207,7 +207,7 @@ password：string
 
 ##输出
 
-使用session设置cookie，userID：userID，不过后续因为每次都直接传输userID，因此尚未直接使用到cookie
+使用session设置cookie，userID：userID，不过后续只有登录登出改密码系列的操作使用了cookie，其他的操作每次都直接传输userID，因此尚未直接使用到cookie
 
 errCode
 
