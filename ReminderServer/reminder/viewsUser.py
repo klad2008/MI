@@ -18,8 +18,14 @@ def registe(request):
 
     if (Ret["errCode"] == -1):
         Ret["errCode"] = 0
-    return HttpResponse(json.dumps(Ret), content_type = 'application/json')
 
+    print(json.dumps(Ret))
+    response = HttpResponse(json.dumps(Ret), content_type = 'application/json')
+    response["Access-Control-Allow-Origin"] = "*"
+    response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+    response["Access-Control-Max-Age"] = "1000"
+    response["Access-Control-Allow-Headers"] = "*"
+    return response
 
 
 def logIn(request):
@@ -40,9 +46,16 @@ def logIn(request):
     if (Ret["errCode"] == -1):
         request.session["userID"] = userID
         Ret["errCode"] = 0
-    print(json.dumps(Ret))
-    return HttpResponse(json.dumps(Ret), content_type = 'application/json')
 
+#    ip = request.META['REMOTE_ADDR']
+
+    print(json.dumps(Ret))
+    response = HttpResponse(json.dumps(Ret), content_type = 'application/json')
+    response["Access-Control-Allow-Origin"] = "*"
+    response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+    response["Access-Control-Max-Age"] = "1000"
+    response["Access-Control-Allow-Headers"] = "*"
+    return response
 
 
 def logOut(request):
@@ -74,9 +87,9 @@ def updatePassword(request):
             else:
                 Ret["errCode"] = 1
         else:
-            Ret["errCode"] = 2;
+            Ret["errCode"] = 2
     else:
-        Ret["errCode"] = 3;
+        Ret["errCode"] = 3
 
     if (Ret["errCode"] == -1):
         Ret["errCode"] = 0

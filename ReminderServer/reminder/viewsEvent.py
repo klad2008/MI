@@ -30,7 +30,7 @@ def createEvent(request):
         else:
             Permission = Permission | 0
         eventTmp = event.objects.create(eventID = EventID, userID = UserID, title = Title, content = Content,
-                                        permission = Permission, approve = 0, startTime = StartTime, endTime = EndTime, fin = 0)
+                                        permission = Permission, approve = 0, startTime = StartTime, endTime = EndTime, fin = 0, forked = 0)
         eventTmp.save()
     else:
         Ret["errCode"] = 1
@@ -100,10 +100,9 @@ def deleteEvent(request):
 def queryEvents(request):
 
     UserID = request.POST["UserID"]
-    Fin = request.POST["fin"]
     Ret = {"errCode" : -1}
 
-    EventsList = event.objects.filter(userID = UserID, fin = Fin)
+    EventsList = event.objects.filter(userID = UserID)
     EventsList2 = []
     for EventTmp in EventsList:
         Tmp = {}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
 <title>Home</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,24 +32,25 @@
 <script>
     var usernameData = {
         message : "username"
-    }
+    };
     var passwordData = {
         message : "password"
-    }
+    };
     var passwordreData = {
         message : "password"
-    }
+    };
     var userCheck = true;
     var storage = window.localStorage;
 
-    var action = {
-        signup: function() {
+    var action;
+    action = {
+        signup: function () {
             console.log("sign in action"),
-            console.log(usernameData.message),
-            console.log(passwordData.message),
-            console.log(passwordreData.message),
+                console.log(usernameData.message),
+                console.log(passwordData.message),
+                console.log(passwordreData.message),
 
-            a = passwordData.message;
+                a = passwordData.message;
             b = passwordreData.message;
 
             if (a != b) {
@@ -57,35 +58,42 @@
                 window.location.href = "signup.html";
             }
 
-            storage.setItem("username", usernameData.message);
+            $.post("http://10.131.235.79:7900/registe/", {
+                    "userID": usernameData.message,
+                    "password": passwordData.message
+                },
+                function (ret) {
+                    $.each(ret, function (i, field) {
+                        if (i == "errCode") {
+                            console.log(i, ' ', field)
+                            if (field == 0) {
+                                storage.setItem("username", usernameData.message);
+                                console.log(window.location.href);
+                                window.location.href = "profile.html";
+                            }
+                        }
+                    });
+                }
+            );
 
-//		验证用户名密码
-
-            if (userCheck) {
-                window.location.href = "profile.html";
-            }
-            else {
-                //window.setTimeout("alert("Unknown Username or Wrong Password!")", 1000);
-                window.location.href = "signup.html";
-            }
         }
-    }
-    new Vue ({
-        el: '#username',
-        data : usernameData
-    })
-    new Vue ({
-        el: '#password',
-        data : passwordData
-    })
-    new Vue ({
-        el: '#passwordre',
-        data : passwordreData
-    })
-    new Vue ({
-        el: '#button',
-        methods: action
-    })
+    };
+        new Vue({
+            el: '#username',
+            data: usernameData
+        });
+        new Vue({
+            el: '#password',
+            data: passwordData
+        });
+        new Vue({
+            el: '#passwordre',
+            data: passwordreData
+        });
+        new Vue({
+            el: '#button',
+            methods: action
+        });
 
 </script>
 </html>

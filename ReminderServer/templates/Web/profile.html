@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
 <title>About</title>
 <!--Custom Theme files-->
@@ -97,7 +97,7 @@
 					<h3>热门事项</h3>
 					<section class="ac-container">
 						<div v-for="item in items">
-							<label class="grid3"><i></i>{{ item }}</label>
+							<label class="grid3"><i></i>{{ item[0] }}</label>
 						</div>
 						<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 					</section>
@@ -121,8 +121,8 @@
 		friendnum : 11,
 		forknum : 10,
 		friend : [ 'test01' , 'test02' , 'test03' ],
-		items : [ 'aaa', 'bbb', 'ccc' ]
-	}
+		items : [ ['aaa', 0], ['bbb', 1], ['ccc', 2] ],
+	};
 	var action = {
 		getreminder: function() {
 
@@ -140,15 +140,65 @@
 		signout: function() {
 			window.localStorage.clear();
             window.location.href = "signin.html";
-        },
-    }
+        }
+    };
 
     new Vue ({
         el: '#page',
         data : pageData,
 		methods: action
-    })
+    });
 
+    $(document).ready(function(){
+        $.post("http://10.131.235.79:7900/queryFriends/", {
+                "userID": pageData.username
+            },
+            function (ret) {
+                status = -1;
+                $.each(ret, function (i, field) {
+                    if (i == "errCode") {
+                        console.log(i, ' ', field);
+                        status = field;
+                    }
+                    if (i == "friends") {
+                        pageData.friend = [];
+                        $.each(field, function(j, fjeld) {
+                            console.log(j, ' ', fjeld);
+                            $.each(fjeld, function(k, fkeld) {
+                                if (k == "uBID") {
+                                    pageData.friendnum = pageData.friend.push(fkeld);
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        );
+        $.post("http://10.131.235.79:7900/queryEvents/", {
+                "userID": pageData.username
+            },
+            function (ret) {
+                status = -1;
+                $.each(ret, function (i, field) {
+                    if (i == "errCode") {
+                        console.log(i, ' ', field);
+                        status = field;
+                    }
+                    if (i == "friends") {
+                        pageData.friend = [];
+                        $.each(field, function(j, fjeld) {
+                            console.log(j, ' ', fjeld);
+                            $.each(fjeld, function(k, fkeld) {
+                                if (k == "uBID") {
+                                    pageData.friendnum = pageData.friend.push(fkeld);
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        );
+    })
 </script>
 
 </html>
