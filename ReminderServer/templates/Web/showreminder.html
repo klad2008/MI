@@ -116,21 +116,22 @@
 <script src = "https://cdn.bootcss.com/vue/2.2.2/vue.min.js"> </script>
 <script>
 
+// 查询storage["reminderid"]的相关信息
+
     var storage = window.localStorage;
 	var pageData = {
-		title : "xixixixi",
+		title : storage["reminderid"],
         managername : "test007",
 		totalnum : 11,
 		forknum : 10,
         deadlinetime : "2018-1-1",
-        item : [[1,2,3], [2,3,4]],
+        item : [["read a book"], ["have a lunch"]],
         teammate : ['aaa', 'bbb', 'ccc'],
         show : 'private',
         people : 3
 	}
 	var action = {
 		getreminder: function() {
-
 			window.location.href = "reminder.html";
 		},
 
@@ -148,7 +149,14 @@
         },
 
         fork: function() {
-            window.alert("fork");
+			var string = ""
+			for (var i=0; i<pageData.item.length; i++) {
+				string += pageData.item[i];
+				string += "^";
+			}
+			console.log(string);
+			storage.setItem("item", string);
+			window.location.href = "addreminder.html";
         },
 
 		itemdetail: function( item ) {

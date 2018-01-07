@@ -1,15 +1,3 @@
-<!--
-
-事项页面
-展示内容： 姓名 好友 热门事项
-需要内容：
-1、内容
-2、好友
-3、所有被fork过的时间名称
-
--->
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -105,7 +93,7 @@
 					<h3>所有提醒</h3>
 					<section class="ac-container">
 						<div v-for="item in items">
-							<label class="grid3"><i></i>{{ item }}</label>
+							<label v-on:click="itemdetail(item)" class="grid3"><i></i>{{ item }}</label>
 						</div>
 						<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 					</section>
@@ -117,9 +105,12 @@
 <script src = "https://cdn.bootcss.com/vue/2.2.2/vue.min.js"> </script>
 <script>
 
+// 根据 storage["friendid"] 查找该用户的信息
+// 所有的提醒 被引用的提醒 和他们的列表名
+
     var storage = window.localStorage;
 	var pageData = {
-		username : "xixihaha",
+		username : storage["friendid"],
 		totalnum : 11,
 		forknum : 10,
 		friend : [ 'aaa' , 'bbb' , 'ccc' ],
@@ -145,7 +136,8 @@
         },
 
 		itemdetail: function( item ) {
-			window.alert(item);
+			storage.setItem("reminderid", item);
+			window.location.href = "showreminder.html";
 		}
     }
 

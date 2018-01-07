@@ -86,7 +86,6 @@
 
 					<h3>子事项 <button onclick="add()">+</button> <button onclick="del()">-</button></h3>
                         <div id="org">
-                            <input type="text" name="organizers[]" style='width:200px;height:20px' />
                         </div>
                     <script type="text/javascript">
                         function add(){
@@ -120,6 +119,7 @@
 
     var storage = window.localStorage;
     frilist = ['aaa', 'bbb', 'ccc'];
+
     function clearlist(){
         document.getElementById('frilist').innerHTML = "";
     }
@@ -142,8 +142,32 @@
         }
     }
 	var pageData = {
-        title : "xixi",
+        title : storage["reminderid"],
 	}
+	item = storage["item"];
+	if (item.length == 0) {
+		var input1 = document.createElement('input');
+		input1.setAttribute('type', 'text');
+		input1.setAttribute('name', 'organizers[]');
+		input1.setAttribute('style', "width:200px;height:20px");
+		var btn1 = document.getElementById("org");
+		btn1.insertBefore(input1,null);
+	}
+	else {
+		console.log(item);
+		item = item.split("^");
+		for (var i=0; i<item.length; i++) {
+			var input1 = document.createElement('input');
+			input1.setAttribute('type', 'text');
+			input1.setAttribute('name', 'organizers[]');
+			input1.setAttribute('style', "width:200px;height:20px");
+			input1.setAttribute('value', item[i]);
+			var btn1 = document.getElementById("org");
+			btn1.insertBefore(input1,null);
+		}
+	}
+
+
 	var action = {
         getreminder: function() {
 

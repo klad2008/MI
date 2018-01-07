@@ -1,15 +1,3 @@
-<!--
-
-事项页面
-展示内容： 姓名 好友 热门事项
-需要内容：
-1、内容
-2、好友
-3、所有被fork过的时间名称
-
--->
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -107,18 +95,18 @@
 <script>
 
     var storage = window.localStorage;
+
+// 搜索ID用户名为 storage["searchid"]的内容
+// searchnum 和 friend信息
+
 	var pageData = {
-		username : "luoqiyao",
-        searchid : "输入搜索用户名",
-		todonum : 11,
-		donenum : 10,
-        searchnum : 0,
-		friend : [ 'aaa' , 'bbb' , 'ccc' ],
-		items : [ 'aaa', 'bbb', 'ccc' ]
+		username : storage["username"],
+        searchid : storage["searchid"],
+        searchnum : 1,
+		friend : ['aaa'],
 	}
 	var action = {
 		getreminder: function() {
-
 			window.location.href = "reminder.html";
 		},
 
@@ -136,13 +124,13 @@
         },
 
         search: function() {
-            window.alert("Search");
-            window.alert(pageData.searchid);
+			storage.setItem("searchid", pageData.searchid);
             window.location.href = "addfriend.html";
         },
 
 		itemdetail: function( item ) {
-			window.alert(item);
+			storage.setItem("friendid", item);
+			window.location.href = "friend.html";
 		},
     }
 
