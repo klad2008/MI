@@ -19,6 +19,7 @@ from reminder import views, viewsUser, viewsFriends, viewsEvent
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^signin.html$', views.chatroom),
     url(r'^logIn/', viewsUser.logIn),
     url(r'^logOut/', viewsUser.logOut),
     url(r'^registe/', viewsUser.registe),

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div id = "username">
+        <p> username </p>
+        <input type = "text" v-model = "message" />
+    </div>
+
+    <div id = "password">
+        <p> password </p>
+        <input type = "password" v-model = "message" />
+    </div>
+
+    <br>
+
+    <div id = "button">
+        <button v-on:click = "signin()"> Sign In </button>
+    </div>
+
+    <div id = "changebutton">
+        <button onclick="location.href='signup.html'">Sign Up</button>
+    </div>
+
+    <div id = "signStatus"> none </div>
+
+</body>
+
+<script src = "https://cdn.bootcss.com/vue/2.2.2/vue.min.js"> </script>
+<script src = "https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"> </script>
+<script>
+    var usernameData = {
+        message : "username"
+    };
+    var passwordData = {
+        message : "password"
+    };
+    var userCheck = false;
+    var storage = window.localStorage;
+
+    var action = {
+        signin: function() {
+            console.log("sign in action"),
+            console.log(usernameData.message),
+            console.log(passwordData.message),
+
+            $.post("/logIn/", {"userID":usernameData.message, "password":passwordData.message},
+                function(ret){
+                    $.each(ret, function(i, field){
+                        if (i == "errCode") {
+                            $("#signStatus").html(field);
+                            if (field == 0){
+                                storage.setItem("username", usernameData.message);
+                                console.log(window.location.href);
+                                window.location.href = "mainpage.html";
+                            }
+                        }
+                    });
+                }
+            );
+        }
+    };
+    new Vue ({
+        el: '#username',
+        data : usernameData
+    });
+    new Vue ({
+        el: '#password',
+        data : passwordData
+    });
+    new Vue ({
+        el: '#button',
+        methods: action
+    })
+
+</script>
+
+</html>

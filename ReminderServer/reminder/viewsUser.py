@@ -40,6 +40,7 @@ def logIn(request):
     if (Ret["errCode"] == -1):
         request.session["userID"] = userID
         Ret["errCode"] = 0
+    print(json.dumps(Ret))
     return HttpResponse(json.dumps(Ret), content_type = 'application/json')
 
 
