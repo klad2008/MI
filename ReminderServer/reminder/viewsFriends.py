@@ -42,8 +42,6 @@ def updateFriends(request):
 
 
 def queryFriends(request):
-    print("1232131")
-
     UserID = request.POST["userID"]
     Ret = {"errCode" : -1}
 
@@ -60,4 +58,9 @@ def queryFriends(request):
     if (Ret["errCode"] == -1):
         Ret["errCode"] = 0
     print(json.dumps(Ret))
-    return HttpResponse(json.dumps(Ret), content_type = 'application/json')
+    response = HttpResponse(json.dumps(Ret), content_type = 'application/json')
+    response["Access-Control-Allow-Origin"] = "*"
+    response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+    response["Access-Control-Max-Age"] = "1000"
+    response["Access-Control-Allow-Headers"] = "*"
+    return response

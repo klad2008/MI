@@ -22,6 +22,7 @@ class event(models.Model):
     startTime = models.DateTimeField()
     endTime = models.DateTimeField()
     fin = models.IntegerField()
+    forked = models.IntegerField()
 
 class comment(models.Model):
     eventID = models.IntegerField()

@@ -1,17 +1,5 @@
-<!--
-
-个人资料页面
-展示内容： 姓名 好友 热门事项
-需要内容：
-1、内容
-2、好友
-3、所有被fork过的时间名称
-
--->
-
-
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
 <title>About</title>
 <!--Custom Theme files-->
@@ -95,7 +83,7 @@
 						<h3> {{ forknum }}</h3>
 						<p>Forked </p>
 						<p>--------</p>
-						<p><a href="addreminder.html">添加提醒</p>
+						<p><a href="addreminder.html">添加提醒</a></p>
 					</div>
 					<div class="clear"> </div>
 				</div>
@@ -109,7 +97,7 @@
 					<h3>热门事项</h3>
 					<section class="ac-container">
 						<div v-for="item in items">
-							<label class="grid3"><i></i>{{ item }}</label>
+							<label class="grid3"><i></i>{{ item[0] }}</label>
 						</div>
 						<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 					</section>
@@ -122,13 +110,19 @@
 <script>
 
     var storage = window.localStorage;
+
+	// 用户名为 storage["username"]
+	// 获取用户的好友个数，热门事项
+	// friendnum, friend 好友数量 & 好友名称
+	// forknum, items fork总个数 fork过的事项
+
 	var pageData = {
-		username : "luoqiyao",
+		username : storage["username"],
 		friendnum : 11,
 		forknum : 10,
 		friend : [ 'test01' , 'test02' , 'test03' ],
-		items : [ 'aaa', 'bbb', 'ccc' ]
-	}
+		items : [ ['aaa', 0], ['bbb', 1], ['ccc', 2] ],
+	};
 	var action = {
 		getreminder: function() {
 
@@ -146,15 +140,65 @@
 		signout: function() {
 			window.localStorage.clear();
             window.location.href = "signin.html";
-        },
-    }
+        }
+    };
 
     new Vue ({
         el: '#page',
         data : pageData,
 		methods: action
-    })
+    });
 
+    $(document).ready(function(){
+        $.post("http://10.131.235.79:7900/queryFriends/", {
+                "userID": pageData.username
+            },
+            function (ret) {
+                status = -1;
+                $.each(ret, function (i, field) {
+                    if (i == "errCode") {
+                        console.log(i, ' ', field);
+                        status = field;
+                    }
+                    if (i == "friends") {
+                        pageData.friend = [];
+                        $.each(field, function(j, fjeld) {
+                            console.log(j, ' ', fjeld);
+                            $.each(fjeld, function(k, fkeld) {
+                                if (k == "uBID") {
+                                    pageData.friendnum = pageData.friend.push(fkeld);
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        );
+        $.post("http://10.131.235.79:7900/queryEvents/", {
+                "userID": pageData.username
+            },
+            function (ret) {
+                status = -1;
+                $.each(ret, function (i, field) {
+                    if (i == "errCode") {
+                        console.log(i, ' ', field);
+                        status = field;
+                    }
+                    if (i == "friends") {
+                        pageData.friend = [];
+                        $.each(field, function(j, fjeld) {
+                            console.log(j, ' ', fjeld);
+                            $.each(fjeld, function(k, fkeld) {
+                                if (k == "uBID") {
+                                    pageData.friendnum = pageData.friend.push(fkeld);
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        );
+    })
 </script>
 
 </html>
