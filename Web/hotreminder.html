@@ -1,0 +1,140 @@
+<!--
+
+事项页面
+展示内容： 姓名 好友 热门事项
+需要内容：
+1、内容
+2、好友
+3、所有被fork过的时间名称
+
+-->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>About</title>
+<!--Custom Theme files-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<!--Custom Theme files-->
+<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+<link type="text/css" rel="stylesheet" href="css/jquery.mmenu.all.css?v=5.4.4" />
+<!--//Custom Theme files-->
+<!--web-fonts-->
+<!--//web-fonts-->
+<!--js-->
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.mmenu.min.all.js?v=5.4.4"></script>
+<!-- //js -->
+</head>
+<body>
+		<div class=" mm-wrapper"  id="page">
+			<div class="push-menu ">
+				<div class="banner">
+					<div class="banner-text">
+						<div class="menu">
+							<a href="#menu"><img src="images/menu-icon.png" alt=""/></a>
+							<nav id="menu">
+								<ul class="">
+									<li class="menu-title">导航</li>
+									<li v-on:click = "getreminder()"><a><span class="icons icn3"> </span> 查看任务</a></li>
+									<li><a href="addreminder.html"><span class="icons"> </span> 添加提醒</a></li>
+									<li v-on:click = "gethotreminder()"><a href="#"><span class="icons icn2"> </span> 热门事件</a></li>
+									<li v-on:click = "getprofile()"><a href="#"><span class="icons icn4"> </span> 个人资料</a></li>
+									<li v-on:click = "signout()"><a><span class="icons icn5"> </span> 登出</a></li>
+								</ul>
+							</nav>
+								<script type="text/javascript">
+									$(function() {
+										$("#menu")
+											.mmenu({
+								extensions 	: [ "theme-dark", "effect-listitems-slide" ],
+								iconPanels	: {
+									add 		: true,
+									visible		: 1
+								},
+								navbar		: {
+									add 		: false
+								},
+								counters	: true
+											}).on( 'click',
+												'a[href^="#/"]',
+												function() {
+													alert( "Thank you for clicking, but that's a demo link." );
+													return false;
+												}
+											);
+									});
+								</script>
+							<!-- /script-for-menu -->
+						</div>
+					</div>
+				</div>
+				<div class="clear"> </div>
+				<div class="banner-bottom">
+					<div class="banner-bottom-all">
+						<h3> 热门事项</h3>
+						<p>Top 10 </p>
+					</div>
+					<div class="clear"> </div>
+				</div>
+				<div class="work-text">
+					<h3>Top10 Forked 事项</h3>
+					<section class="ac-container">
+						<div v-for="item in friend">
+							<label v-on:click="itemdetail(item)" class="grid4"><i></i>{{ item }}</label>
+						</div>
+					<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+				</div>
+			</div>
+		</div>
+</body>
+
+<script src = "https://cdn.bootcss.com/vue/2.2.2/vue.min.js"> </script>
+<script>
+
+    var storage = window.localStorage;
+	var pageData = {
+		username : "xixihaha",
+		totalnum : 11,
+		forknum : 10,
+		friend : [ 'aaa' , 'bbb' , 'ccc' ],
+		items : [ 'aaa', 'bbb', 'ccc' ]
+	}
+	var action = {
+		getreminder: function() {
+
+			window.location.href = "reminder.html";
+		},
+
+		gethotreminder: function() {
+			window.location.href = "hotreminder.html";
+		},
+
+		getprofile: function() {
+			window.location.href = "profile.html";
+		},
+
+		signout: function() {
+			window.localStorage.clear();
+            window.location.href = "signin.html";
+        },
+
+		itemdetail: function( item ) {
+			window.alert(item);
+		}
+    }
+
+    new Vue ({
+        el: '#page',
+        data : pageData,
+		methods: action
+    })
+
+</script>
+
+</html>

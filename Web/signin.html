@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+<link type="text/css" rel="stylesheet" href="css/jquery.mmenu.all.css?v=5.4.4" />
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.mmenu.min.all.js?v=5.4.4"></script>
+</head>
+<body>
+    <div class=" mm-wrapper"  id="page">
+        <div class="signin-form profile">
+            <h3>Welcome, <span>Friend</span></h3>
+            <img src="images/img1.jpg" alt=""/>
+            <div class="login-form">
+
+                    <input id="username" type = "text" v-model = "message" />
+                    <input id="password" type = "password" v-model = "message" />
+        			<input id="button" v-on:click = "signin()" type="submit" value="LOGIN" />
+
+    		</div>
+            <div><p><a href="signup.html"> CREATE NEW ACCOUNT</a></p></div>
+        </div>
+    </div>
+</body>
+
+<script src = "https://cdn.bootcss.com/vue/2.2.2/vue.min.js"> </script>
+<script>
+    var usernameData = {
+        message : "  username"
+    }
+    var passwordData = {
+        message : "  password"
+    }
+    var userCheck = true;
+    var storage = window.localStorage;
+
+    var action = {
+        signin: function() {
+            console.log("sign in action"),
+            console.log(usernameData.message),
+            console.log(passwordData.message),
+
+            storage.setItem("username", usernameData.message);
+
+            if (userCheck) {
+                window.location.href = "profile.html";
+            }
+            else {
+                //window.setTimeout("alert("Unknown Username or Wrong Password!")", 1000);
+                window.location.href = "signin.html";
+            }
+
+        }
+    }
+    new Vue ({
+        el: '#username',
+        data : usernameData
+    })
+    new Vue ({
+        el: '#password',
+        data : passwordData
+    })
+    new Vue ({
+        el: '#button',
+        methods: action
+    })
+</script>
+</html>
