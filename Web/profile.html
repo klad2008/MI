@@ -1,15 +1,3 @@
-<!--
-
-个人资料页面
-展示内容： 姓名 好友 热门事项
-需要内容：
-1、内容
-2、好友
-3、所有被fork过的时间名称
-
--->
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -95,7 +83,7 @@
 						<h3> {{ forknum }}</h3>
 						<p>Forked </p>
 						<p>--------</p>
-						<p><a href="addreminder.html">添加提醒</p>
+						<p><a href="addreminder.html">添加提醒</a></p>
 					</div>
 					<div class="clear"> </div>
 				</div>
@@ -122,8 +110,14 @@
 <script>
 
     var storage = window.localStorage;
+
+	// 用户名为 storage["username"]
+	// 获取用户的好友个数，热门事项
+	// friendnum, friend 好友数量 & 好友名称
+	// forknum, items fork总个数 fork过的事项
+
 	var pageData = {
-		username : "luoqiyao",
+		username : storage["username"],
 		friendnum : 11,
 		forknum : 10,
 		friend : [ 'test01' , 'test02' , 'test03' ],
