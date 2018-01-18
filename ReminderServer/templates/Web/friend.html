@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
 <title>About</title>
 <!--Custom Theme files-->
@@ -66,6 +66,8 @@
 							<div class="title-right">
 								<br>
 								<h2> {{ username }} </h2>
+                                <div v-if="friendStatus" v-on:click="deletefriend()"><button> Delete </button></div>
+        						<div v-else v-on:click="addfriend()"><button> Add </button></div>
 							</div>
 							<div class="clear"> </div>
 						</div>
@@ -87,13 +89,14 @@
 					<h3>引用提醒</h3>
 					<section class="ac-container">
 						<div v-for="item in friend">
-							<label v-on:click="itemdetail(item)" class="grid4"><i></i>{{ item }}</label>
+							<label v-on:click="itemdetail(item)" class="grid4"><i></i>{{ item[0] }}</label>
 						</div>
+                    </section>
 					<br>
 					<h3>所有提醒</h3>
 					<section class="ac-container">
 						<div v-for="item in items">
-							<label v-on:click="itemdetail(item)" class="grid3"><i></i>{{ item }}</label>
+							<label v-on:click="itemdetail(item)" class="grid3"><i></i>{{ item[0] }}</label>
 						</div>
 						<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 					</section>
@@ -110,12 +113,14 @@
 
     var storage = window.localStorage;
 	var pageData = {
+	    friendStatus : false,
+        myname : storage["username"],
 		username : storage["friendid"],
 		totalnum : 11,
 		forknum : 10,
 		friend : [ 'aaa' , 'bbb' , 'ccc' ],
 		items : [ 'aaa', 'bbb', 'ccc' ]
-	}
+	};
 	var action = {
 		getreminder: function() {
 
@@ -136,16 +141,94 @@
         },
 
 		itemdetail: function( item ) {
-			storage.setItem("reminderid", item);
-			window.location.href = "showreminder.html";
+		    storage["eventID"] = item[1];
+            window.location.href = "showreminder.html";
+		},
+
+		addfriend: function () {
+            $.post("http://10.131.235.79:7900/updateFriends/", {"uAID": pageData.myname, "uBID":pageData.username, friendStatus : 1},
+                function (ret) {
+                    $.each(ret, function (i, field) {
+                        if (i == "errCode") {
+                            console.log(i, ' ', field);
+                        }
+                    });
+                    window.location.href = "friend.html";
+                }
+            );
+        },
+
+		deletefriend: function () {
+            $.post("http://10.131.235.79:7900/updateFriends/", {"uAID": pageData.myname, "uBID":pageData.username, friendStatus : 0},
+                function (ret) {
+                    $.each(ret, function (i, field) {
+                        if (i == "errCode") {
+                            console.log(i, ' ', field);
+                        }
+                    });
+                    window.location.href = "friend.html";
+                }
+            );
 		}
-    }
+    };
 
     new Vue ({
         el: '#page',
         data : pageData,
 		methods: action
-    })
+    });
+
+    $.post("http://10.131.235.79:7900/checkFriendStatus/", {"uAID" : pageData.myname, "uBID" : pageData.username},
+        function(ret) {
+            $.each(ret, function (i, field) {
+                if (i == "errCode") {
+                    console.log(i, ' ', field);
+                }
+                if (i == "status") {
+                    console.log(i, ' ', field);
+                    pageData.friendStatus = field;
+                }
+            });
+        }
+    );
+
+    $.post("http://10.131.235.79:7900/queryEvents/", {"UserID": pageData.username},
+        function (ret) {
+            $.each(ret, function (i, field) {
+                if (i == "errCode") {
+                    console.log(i, ' ', field);
+                }
+                if (i == "events") {
+                    pageData.items = [];
+                    pageData.friend = [];
+                    pageData.forknum = 0;
+                    $.each(field, function(j, fjeld) {
+                        console.log(j, ' ', fjeld);
+                        var tmp = [];
+                        var ff = 0;
+                        $.each(fjeld, function(k, fkeld) {
+                            if (k == "title") {
+                                tmp.push(fkeld);
+                            }
+                        });
+                        $.each(fjeld, function(k, fkeld) {
+                            if (k == "eventID") {
+                                tmp.push(fkeld);
+                            }
+                        });
+                        $.each(fjeld, function(k, fkeld) {
+                            if (k == "forked")
+                                ff = fkeld;
+                        });
+                        if (ff > 0)
+                            pageData.forknum = pageData.friend.push(tmp);
+                        else
+                            pageData.totalnum = pageData.items.push(tmp);
+                    });
+                }
+            });
+        }
+    );
 
 </script>
 

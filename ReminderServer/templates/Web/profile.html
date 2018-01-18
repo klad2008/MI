@@ -9,7 +9,7 @@
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!--Custom Theme files-->
 <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
-<link type="text/css" rel="stylesheet" href="css/jquery.mmenu.all.css?v=5.4.4" />
+<link type="text/css" rel="stylesheet" href="css/jquery.mmenu.all.css" />
 <!--//Custom Theme files-->
 <!--web-fonts-->
 <!--//web-fonts-->
@@ -77,7 +77,7 @@
 						<h3> {{ friendnum }}</h3>
 						<p>Friends </p>
 						<p>--------</p>
-						<p><a href="addfriend.html">添加好友</p>
+                        <p><a href="addfriend.html">添加好友</a></p>
 					</div>
 					<div class="banner-bottom-right">
 						<h3> {{ forknum }}</h3>
@@ -91,13 +91,13 @@
 					<h3>好友</h3>
 					<section class="ac-container">
 						<div v-for="item in friend">
-							<label class="grid4"><i></i>{{ item }}</label>
+							<label v-on:click="frienddetail(item)" class="grid4"><i></i>{{ item }}</label>
 						</div>
 					<br>
 					<h3>热门事项</h3>
 					<section class="ac-container">
 						<div v-for="item in items">
-							<label class="grid3"><i></i>{{ item[0] }}</label>
+							<label v-on:click="eventdetail(item)" class="grid3"><i></i>{{ item[0] }}</label>
 						</div>
 						<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 					</section>
@@ -118,10 +118,11 @@
 
 	var pageData = {
 		username : storage["username"],
-		friendnum : 11,
+		friendnum : 3,
+        itemnum : 3,
 		forknum : 10,
 		friend : [ 'test01' , 'test02' , 'test03' ],
-		items : [ ['aaa', 0], ['bbb', 1], ['ccc', 2] ],
+		items : [ ['aaa', 0], ['bbb', 1], ['ccc', 2] ]
 	};
 	var action = {
 		getreminder: function() {
@@ -140,8 +141,24 @@
 		signout: function() {
 			window.localStorage.clear();
             window.location.href = "signin.html";
-        }
-    };
+        },
+
+		frienddetail: function( item ) {
+		    storage["friendid"] = item;
+            window.location.href = "friend.html";
+		},
+
+		itemdetail: function( item ) {
+		    storage["eventID"] = item;
+            window.location.href = "showreminder.html";
+		},
+
+
+		eventdetail: function( item ) {
+		    storage["eventID"] = item[1];
+            window.location.href = "showreminder.html";
+		}
+	};
 
     new Vue ({
         el: '#page',
@@ -154,13 +171,12 @@
                 "userID": pageData.username
             },
             function (ret) {
-                status = -1;
                 $.each(ret, function (i, field) {
                     if (i == "errCode") {
                         console.log(i, ' ', field);
-                        status = field;
                     }
                     if (i == "friends") {
+                        pageData.friendnum = 0;
                         pageData.friend = [];
                         $.each(field, function(j, fjeld) {
                             console.log(j, ' ', fjeld);
@@ -175,24 +191,36 @@
             }
         );
         $.post("http://10.131.235.79:7900/queryEvents/", {
-                "userID": pageData.username
+                "UserID": pageData.username
             },
             function (ret) {
-                status = -1;
                 $.each(ret, function (i, field) {
                     if (i == "errCode") {
                         console.log(i, ' ', field);
-                        status = field;
                     }
-                    if (i == "friends") {
-                        pageData.friend = [];
+                    if (i == "events") {
+                        pageData.items = [];
+                        pageData.forknum = 0;
                         $.each(field, function(j, fjeld) {
                             console.log(j, ' ', fjeld);
+                            var tmp = [];
                             $.each(fjeld, function(k, fkeld) {
-                                if (k == "uBID") {
-                                    pageData.friendnum = pageData.friend.push(fkeld);
+                                if (k == "title") {
+                                    tmp.push(fkeld);
                                 }
                             });
+                            $.each(fjeld, function(k, fkeld) {
+                                if (k == "eventID") {
+                                    tmp.push(fkeld);
+                                }
+                            });
+                            $.each(fjeld, function(k, fkeld) {
+                                if (k == "forked") {
+                                    if (fkeld > 0)
+                                        pageData.forknum += 1;
+                                }
+                            });
+                            pageData.itemnum = pageData.items.push(tmp)
                         });
                     }
                 });

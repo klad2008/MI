@@ -13,44 +13,29 @@ class friend(models.Model):
 
 class event(models.Model):
     eventID = models.IntegerField()
-    userID = models.CharField(max_length=20)
     title = models.CharField(max_length=30)
     content = models.CharField(max_length=200)
-#    picture = models.ImageField(upload_to = 'img')
     permission = models.IntegerField()
     approve = models.IntegerField()
-    startTime = models.DateTimeField()
+#    startTime = models.DateTimeField()
     endTime = models.DateTimeField()
     fin = models.IntegerField()
     forked = models.IntegerField()
+
+class eventMember(models.Model):
+    eventID = models.IntegerField()
+    userID = models.CharField(max_length=20)
+
+
+class subEvent(models.Model):
+    subEventID = models.IntegerField()
+    eventID = models.IntegerField()
+    title = models.CharField(max_length=20)
+    fin = models.IntegerField()
+#    content = models.CharField(max_length=20)
 
 class comment(models.Model):
     eventID = models.IntegerField()
     userID = models.CharField(max_length=20)
     content = models.CharField(max_length = 200)
     commitTime = models.DateTimeField(auto_now_add=1)
-
-
-
-
-
-
-
-class eventRelationship(models.Model):
-    eAID = models.IntegerField()
-    eBID = models.IntegerField()
-
-class link(models.Model):
-    linkID = models.IntegerField()
-    userID = models.CharField(max_length=20)
-    title = models.CharField(max_length=30)
-    content = models.CharField(max_length=200)
-    remarks = models.CharField(max_length=100)
-#    picture = models.ImageField(upload_to = 'img')
-    Permission = models.IntegerField()
-    topologyID = models.IntegerField()
-    approve = models.IntegerField()
-
-class linkComponent(models.Model):
-    linkID = models.IntegerField()
-    eventID = models.IntegerField()

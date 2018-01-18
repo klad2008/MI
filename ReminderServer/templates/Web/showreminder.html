@@ -11,7 +11,7 @@
 
 
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
 <title>About</title>
 <!--Custom Theme files-->
@@ -78,7 +78,9 @@
 					<div class="banner-bottom-all">
 						<h1> {{ title }}</h1>
                         <p> Fork Number : {{ forknum }} </p>
-						<div v-on:click="fork()"><button> Fork </button></div>
+						<div v-if="authority && !fin" v-on:click="finish()"><button> Finish </button></div>
+						<div v-else-if="authority && fin" v-on:click="restart()"><button> Restart </button></div>
+						<div v-else v-on:click="fork()"><button> Fork </button></div>
 					</div>
 					<div class="clear"> </div>
 				</div>
@@ -93,18 +95,23 @@
                     <div v-if="people == 1"> <label class="grid4"><i></i> 单人 </label></div>
                     <div v-else> <label class="grid4"><i></i> 合作 </label></div>
 
+                    </section>
+                    <div v-if="itemnum >= 1">
 					<h3>子事项</h3>
 					<section class="ac-container">
 						<div v-for="item in item">
-							<label v-on:click="itemdetail(item)" class="grid2"><i></i>{{ item[0] }} {{item[1]}}</label>
+							<label v-on:click="finishitem(item)" class="grid2"><i></i>{{ item[0] }}</label>
 						</div>
+                    </section>
+                    </div>
 
-                    <div v-if="people > 1">
-                        <h3>合作队友</h3>
+                    <div v-if="people >= 1">
+                        <h3>参与者</h3>
     					<section class="ac-container">
     						<div v-for="item in teammate">
     							<label v-on:click="itemdetail(item)" class="grid3"><i></i>{{ item }}</label>
     						</div>
+                        </section>
                     </div>
 					<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
@@ -119,17 +126,22 @@
 // 查询storage["reminderid"]的相关信息
 
     var storage = window.localStorage;
-	var pageData = {
-		title : storage["reminderid"],
-        managername : "test007",
-		totalnum : 11,
-		forknum : 10,
-        deadlinetime : "2018-1-1",
-        item : [["read a book"], ["have a lunch"]],
-        teammate : ['aaa', 'bbb', 'ccc'],
-        show : 'private',
-        people : 3
-	}
+    var pageData;
+    pageData = {
+        authority : 0,
+        eventID : 0,
+        username: "luoqiyao",
+        title: "test-work",
+        managername: "luoqiyao",
+        forknum: 10,
+        fin: 0,
+        deadlinetime: "2018-1-1",
+        itemnum : 2,
+        item: [["read a book"], ["have a lunch"]],
+        teammate: ['aaa', 'bbb', 'ccc'],
+        show: 'private',
+        people: 3
+    };
 	var action = {
 		getreminder: function() {
 			window.location.href = "reminder.html";
@@ -149,27 +161,126 @@
         },
 
         fork: function() {
-			var string = ""
-			for (var i=0; i<pageData.item.length; i++) {
-				string += pageData.item[i];
-				string += "^";
-			}
-			console.log(string);
-			storage.setItem("item", string);
+			console.log(pageData.eventID);
+			storage["eventID"] = eventID;
 			window.location.href = "addreminder.html";
         },
 
+		finish: function() {
+			var checked = window.confirm("finish?");
+			if (checked == true){
+                $.post("http://10.131.235.79:7900/finEvent/", {"eventID":pageData.eventID, "fin" : 1},
+                    function(ret){
+                        $.each(ret, function(i, field){
+                            if (i == "errCode") {
+                                console.log(i, ' ' , field);
+                            }
+                        });
+                        window.location.href = "reminder.html";
+                    }
+                );
+            }
+		},
+
+		restart: function() {
+			var checked = window.confirm("restart?");
+			if (checked == true){
+                $.post("http://10.131.235.79:7900/finEvent/", {"eventID":pageData.eventID, "fin" : 0},
+                    function(ret){
+                        $.each(ret, function(i, field){
+                            if (i == "errCode") {
+                                console.log(i, ' ' , field);
+                            }
+                        });
+                        window.location.href = "reminder.html";
+                    }
+                );
+            }
+		},
+
+		finishitem: function( item ) {
+		    subEventID = item;
+            if (pageData.authority){
+                $.post("http://10.131.235.79:7900/finSubEvent/", {"subEventID":item[1], "fin" : item[2] ^ 1},
+                    function(ret){
+                        $.each(ret, function(i, field){
+                            if (i == "errCode") {
+                                console.log(i, ' ' , field);
+                            }
+                        });
+                        window.location.href = "showreminder.html";
+                    }
+                );
+            }
+		},			//重新发送消息，更新这个item
+			//然后重新载入这个页面
+
 		itemdetail: function( item ) {
-			window.alert(item);
+		    //合作伙伴,跳转到好友界面
+            storage["friendid"] = item;
+            window.location.href = "friend.html";
 		}
-    }
+    };
 
     new Vue ({
         el: '#page',
         data : pageData,
 		methods: action
-    })
+    });
 
+
+    $(document).ready(function() {
+        pageData.username = storage["username"];
+        eventID = JSON.parse(storage["eventID"]);
+        $.post("http://10.131.235.79:7900/querySingleEvent/", {"eventID":eventID},
+            function(ret){
+                $.each(ret, function(i, field){
+                    if (i == "errCode") {
+                        console.log(i, ' ' , field);
+                    }
+                    if (i == "events") {
+                        console.log(i, field);
+                        $.each(field, function (k, fkeld) {
+                            $.each(fkeld, function(j, fjeld){
+                                console.log(j, fjeld);
+                                if (j == "title")
+                                    pageData.title = fjeld;
+                                if (j == "userID") {
+                                    pageData.people = fjeld.length;
+                                    pageData.managername = fjeld[0];
+                                    pageData.teammate = fjeld;
+                                }
+                                if (j == "eventID")
+                                    pageData.eventID = fjeld;
+                                if (j == "endTime")
+                                    pageData.deadlinetime = fjeld;
+                                if (j == "forked")
+                                    pageData.forknum = fjeld;
+                                if (j == "subEvent") {
+                                    pageData.item = fjeld;
+                                    pageData.itemnum = pageData.item.length;
+                                }
+                                if (j == "permission") {
+                                    if (fjeld == 1) pageData.show = "public";
+                                    else pageData.show = "private";
+                                }
+                                if (j == "fork")
+                                    pageData.forknum = fjeld;
+                                if (j == "fin")
+                                    pageData.fin = fjeld;
+                            })
+                        });
+                    }
+                });
+                pageData.authority = 0;
+                for (var i = 0; i < pageData.teammate.length; i++)
+                    if (pageData.teammate[i] == pageData.username)
+                        pageData.authority = 1;
+                if (pageData.managername == pageData.username)
+                    pageData.authority = 1;
+            }
+        );
+    });
 </script>
 
 </html>

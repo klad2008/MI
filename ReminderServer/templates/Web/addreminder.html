@@ -11,7 +11,7 @@
 
 
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
 <title>About</title>
 <!--Custom Theme files-->
@@ -69,18 +69,17 @@
 											);
 									});
 								</script>
-							<!-- /script-for-menu -->
 						</div>
 					</div>
 				</div>
 
 
 				<div class="work-text">
-                    <h3>项目名称   <input name="title" type="text" v-model="title"/></h3>
-                    <h3>截止时间   <input type="date" value="2018-01-01"/></h3>
+                    <h3>项目名称   <label><input name="title" type="text" v-model="title"/></label></h3>
+                    <h3>截止时间   <label><input name="EndTime" type="date" value="2018-01-01"/></label></h3>
                     <h3>开放模式   <label><input name="open" type="radio" value="pri"/>私密</label> <label><input name="open" type="radio" value="pub"/>公开</label></h3>
                     <h3>合作模式   <label><input name="cop" type="radio" value="one" onclick="clearlist()"/>单人</label>
-                        <label><input name="cop" type="radio" value="more"/ onclick="showlist()">多人</label>
+                        <label><input name="cop" type="radio" value="more" onclick="showlist()">多人</label>
                         <div id="frilist"> </div>
                     </h3>
 
@@ -89,17 +88,20 @@
                         </div>
                     <script type="text/javascript">
                         function add(){
+                            var brt = document.createElement('br');
                             var input1 = document.createElement('input');
                             input1.setAttribute('type', 'text');
                             input1.setAttribute('name', 'organizers[]');
                             input1.setAttribute('style', "width:200px;height:20px");
                             console.log(input1);
                             var btn1 = document.getElementById("org");
+                            btn1.insertBefore(brt,null);
                             btn1.insertBefore(input1,null);
                         }
                         function del(){
                             var btn1 = document.getElementById("org");
                             console.log(btn1);
+                            btn1.removeChild(btn1.childNodes[btn1.childNodes.length - 1]);
                             btn1.removeChild(btn1.childNodes[btn1.childNodes.length - 1]);
                         }
                     </script>
@@ -117,7 +119,9 @@
 <script src = "https://cdn.bootcss.com/vue/2.2.2/vue.min.js"> </script>
 <script>
 
+    var eventID = -1;
     var storage = window.localStorage;
+    friendnum = 0;
     frilist = ['aaa', 'bbb', 'ccc'];
 
     function clearlist(){
@@ -134,6 +138,7 @@
             var input1 = document.createElement('input');
             input1.setAttribute('type', 'checkbox');
             input1.setAttribute('name', 'friendlist');
+            input1.setAttribute('value', frilist[i]);
             temp.insertBefore(input1,null);
             var textnode=document.createTextNode(frilist[i]);
             temp.insertBefore(textnode,null);
@@ -143,28 +148,56 @@
     }
 	var pageData = {
         title : storage["reminderid"],
-	}
-	item = storage["item"];
-	if (item.length == 0) {
-		var input1 = document.createElement('input');
+        username : storage["username"]
+    };
+	if (storage.getItem("eventID") == null) {
+        var brt = document.createElement('br');
+        var input1 = document.createElement('input');
 		input1.setAttribute('type', 'text');
 		input1.setAttribute('name', 'organizers[]');
 		input1.setAttribute('style', "width:200px;height:20px");
-		var btn1 = document.getElementById("org");
+        var btn1 = document.getElementById("org");
+        btn1.insertBefore(brt,null);
+        btn1.insertBefore(input1,null);
 		btn1.insertBefore(input1,null);
 	}
 	else {
-		console.log(item);
-		item = item.split("^");
-		for (var i=0; i<item.length; i++) {
-			var input1 = document.createElement('input');
-			input1.setAttribute('type', 'text');
-			input1.setAttribute('name', 'organizers[]');
-			input1.setAttribute('style', "width:200px;height:20px");
-			input1.setAttribute('value', item[i]);
-			var btn1 = document.getElementById("org");
-			btn1.insertBefore(input1,null);
-		}
+        eventID = storage["eventID"];
+		console.log(eventID);
+        $.post("http://10.131.235.79:7900/querySingleEvent/", {"eventID":eventID},
+            function(ret){
+                $.each(ret, function(i, field){
+                    if (i == "errCode") {
+                        console.log(i, ' ' , field);
+                    }
+                    if (i == "events") {
+                        console.log(i, field);
+                        $.each(field, function (k, fkeld) {
+                            $.each(fkeld, function(j, fjeld){
+                                console.log(j, fjeld);
+                                if (j == "title")
+                                    document.getElementsByName("title")[0].value = fjeld;
+                                if (j == "subEvent") {
+                                    for (var i=0; i<fjeld.length; i++) {
+                                        var brt = document.createElement('br');
+                                        var input1 = document.createElement('input');
+                                        input1.setAttribute('type', 'text');
+                                        input1.setAttribute('name', 'organizers[]');
+                                        input1.setAttribute('style', "width:200px;height:20px");
+                                        input1.setAttribute('value', fjeld[i][0]);
+                                        var btn1 = document.getElementById("org");
+                                        btn1.insertBefore(brt,null);
+                                        btn1.insertBefore(input1,null);
+                                    }
+                                }
+                            })
+                        });
+                    }
+                });
+            }
+        );
+
+
 	}
 
 
@@ -194,34 +227,96 @@
         },
 
         yes: function() {
-
+            var title = document.getElementsByName("title")[0].value;
+            var userID = [pageData.username];
+            var EndTime = document.getElementsByName("EndTime")[0].value;
+            var Share = 0;
+            var subEvents = [];
             var tempopen = document.getElementsByName("open");
-            console.log(tempopen);
-            for (var i=0; i<tempopen.length; i++) {
+            for (var i=0; i<tempopen.length; i++)
                 if (tempopen[i].checked == true) {
-                    window.alert(tempopen[i].value);
+                    if (tempopen[i].value == "pub")
+                        Share = 1;
+                    else
+                        Share = 0;
                 }
-            }
             tempopen = document.getElementsByName("cop");
-            console.log(tempopen);
-            for (var i=0; i<tempopen.length; i++) {
-                if (tempopen[i].checked == true) {
-                    window.alert(tempopen[i].value);
+            for (var i=0; i<tempopen.length; i++)
+                if (tempopen[i].checked == true && tempopen[i].value == "more"){
+                    var fril = document.getElementsByName("friendlist");
+                    for (var j = 0; j < fril.length; j++){
+                        console.log(fril[j].checked, fril[j].value);
+                        if (fril[j].checked == true)
+                            userID.push(fril[j].value);
+                    }
                 }
+            tempopen = document.getElementsByName("organizers[]");
+            for (var i = 0; i < tempopen.length; i++){
+//                console.log(tempopen[i].value);
+                subEvents.push(tempopen[i].value);
             }
+            $.post("http://10.131.235.79:7900/createEvent/", {
+                        "Title":title, "UserID":JSON.stringify(userID), "EndTime":EndTime, "Share":Share, "subEvents":JSON.stringify(subEvents)
+                    },
+                function(ret){
+                    $.each(ret, function(i, field){
+                        if (i == "errCode") {
+                            console.log(i, ' ', field);
+                            if (field == 0) {
+                                storage.removeItem("item");
+                                if (eventID != -1){
+                                    $.post("http://10.131.235.79:7900/addForkedTime/", {"eventID" : eventID},
+                                        function(){
+                                            console.log("done");
+                                        });
+                                }
+                                window.location.href = "profile.html";
+                            }
+                            else{
+                                window.alert("添加事件失败");
+                            }
+                        }
+                    });
+                }
+            );
         },
 
         no: function() {
-
+            storage.removeItem("item");
+			window.location.href = "profile.html";
         }
-    }
+    };
 
     new Vue ({
         el: '#page',
         data : pageData,
 		methods: action
-    })
+    });
 
+    $(document).ready(function() {
+        $.post("http://10.131.235.79:7900/queryFriends/", {
+                "userID": pageData.username
+            },
+            function (ret) {
+                $.each(ret, function (i, field) {
+                    if (i == "errCode") {
+                        console.log(i, ' ', field);
+                    }
+                    if (i == "friends") {
+                        frilist = [];
+                        $.each(field, function (j, fjeld) {
+                            console.log(j, ' ', fjeld);
+                            $.each(fjeld, function (k, fkeld) {
+                                if (k == "uBID") {
+                                    friendnum = frilist.push(fkeld);
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        );
+    });
 </script>
 
 </html>
