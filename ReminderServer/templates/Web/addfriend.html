@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
 <title>About</title>
 <!--Custom Theme files-->
@@ -102,9 +102,9 @@
 	var pageData = {
 		username : storage["username"],
         searchid : storage["searchid"],
-        searchnum : 1,
-		friend : ['aaa'],
-	}
+        searchnum : 0,
+		friend : ['']
+    };
 	var action = {
 		getreminder: function() {
 			window.location.href = "reminder.html";
@@ -124,15 +124,34 @@
         },
 
         search: function() {
-			storage.setItem("searchid", pageData.searchid);
-            window.location.href = "addfriend.html";
+            $.post("http://10.131.235.79:7900/queryUsers/", {
+                    "wildcard": pageData.searchid
+                },
+                function (ret) {
+                    $.each(ret, function (i, field) {
+                        if (i == "errCode") {
+                            console.log(i, ' ', field);
+                        }
+                        if (i == "userList") {
+                            console.log(field);
+                            pageData.searchnum = 0;
+                            pageData.friend = [];
+                            $.each(field, function(j, fjeld) {
+                                console.log(j, ' ', fjeld);
+                                pageData.friendnum = pageData.friend.push(fjeld);
+                                pageData.searchnum += 1;
+                            });
+                        }
+                    });
+                }
+            );
         },
 
 		itemdetail: function( item ) {
 			storage.setItem("friendid", item);
 			window.location.href = "friend.html";
-		},
-    }
+		}
+    };
 
     new Vue ({
         el: '#page',

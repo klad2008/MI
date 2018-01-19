@@ -17,13 +17,13 @@
             <h3>Welcome, <span>Friend</span></h3>
             <img src="images/img1.jpg" alt=""/>
             <div class="login-form">
-                    <input id="username" type = "text" v-model = "message" />
-                    <input id="password" type = "password" v-model = "message" />
-                    <input id="passwordre" type = "password" v-model = "message" />
-        			<input id="button" v-on:click = "signup()" type="submit" value="SIGN UP">
+                    <input id="username" type="text" placeholder="username" v-model="message" />
+                    <input id="password" type="password" placeholder="password" v-model="message" />
+                    <input id="passwordre" type="password" placeholder="password_again" v-model="message" />
+        			<input id="button" v-on:click="signup()" type="submit" value="SIGN UP">
 
     		</div>
-            <p><a href="signin.html">SIGN IN</a></p>
+            <div><p><a href="signin.html">SIGN IN</a></p><div>
         </div>
     </div>
 </body>
@@ -31,13 +31,13 @@
 <script src = "https://cdn.bootcss.com/vue/2.2.2/vue.min.js"> </script>
 <script>
     var usernameData = {
-        message : "username"
+        message : ""
     };
     var passwordData = {
-        message : "password"
+        message : ""
     };
     var passwordreData = {
-        message : "password"
+        message : ""
     };
     var userCheck = true;
     var storage = window.localStorage;
@@ -65,7 +65,7 @@
                 function (ret) {
                     $.each(ret, function (i, field) {
                         if (i == "errCode") {
-                            console.log(i, ' ', field)
+                            console.log(i, ' ', field);
                             if (field == 0) {
                                 storage.setItem("username", usernameData.message);
                                 console.log(window.location.href);

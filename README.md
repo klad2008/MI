@@ -1,240 +1,48 @@
-输入使用http表单
+##简单说明
+使用django搭建服务端
+前端通过网页显示
+##数据库模型
+###user
+存储用户名密码等用户信息，其中用户名要求唯一
+###event
+存储事件信息，设置eventID作为唯一的标识符
+###subEvent
+存储子事件信息，设置subEventID作为唯一的标识符，并设置eventID标注其所属的事件
+###friend
+存储单向的好友关系
+###eventMember
+存储事件的成员
+
+（可以有图）
+##界面介绍
+signin/signup
+使用placeholder作为提示
+
+登录后进入profile界面
+显示好友和事件
+
+点击添加好友进入addfriend界面
+搜索关键词查找用户名（部分匹配）
+点击用户名进入好友界面
+
+好友界面只显示他人共享的事件。
+如果他尚未是你的好友，则显示添加按钮。否则显示删除按钮。
+
+点击菜单的事件页面进入reminder界面，显示更多的已完成与未完成事件。
+点击事件名称进入showreminder界面，显示事件的具体信息。
+
+showreminder
+如果你是事件的参与人，
+	如果事件未完成，则有结束事件按钮
+	如果事件已完成，则有重启事件按钮
+如果你不是事件的参与人，则有fork事件按钮
+参与者里列出了 * 所有 * 事件的参与人，点击名字进入对应页面
+子事项列出了所有子事项，点击名字可以设置其是否已完成，红色未完成，绿色已完成
+结束/重启事件会进入reminder界面
+fork事件会进入addreminder界面，并自动加载当前事件的主要信息
+
+进入addreminder界面可以添加事件
+其中多人模式自动加载了好友列表
+
+点击菜单的热门事项进入hotreminder界面，显示公开的被forked最多次数的事件
 
-返回数据使用json格式字符串
-
-某些方法做了异常处理，某些没做，使用时需严格规范格式
-
-#createEvent
-
-##输入
-
-Title：String
-
-UserID：String
-
-Content：String
-
-StartTime：YYYY-mm-dd (具体到时分秒还未做，将来将会是YYYY-mm-dd HH:MM:SS的格式)
-
-EndTime：YYYY-mm-dd（同上）
-
-Share：String（值为“共享”或“不共享”）
-
-## 输出
-
-errCode：0为正常，否则为错误代码，具体代表哪个错误由前端决定
-
-
-
-# changeEvent
-
-## 输入
-
-EventID：int 请使用queryEvents返回的EventID
-
-Title：String
-
-UserID：String
-
-Content：String
-
-StartTime：YYYY-mm-dd (具体到时分秒还未做，将来将会是YYYY-mm-dd HH:MM:SS的格式)
-
-EndTime：YYYY-mm-dd（同上）
-
-Share：String（值为“共享”或“不共享”）
-
-##输出
-
-errCode
-
-
-
-#commentEvent
-
-## 输入
-
-EventID：int 请使用queryEvents返回的EventID
-
-UserID：String 此处指评论者
-
-Content：String
-
-## 输出
-
-errCode
-
-
-
-#deleteEvent
-
-## 输入
-
-EventID：int 请使用queryEvents返回的EventID
-
-##输出
-
-errCode
-
-
-
-# queryEvents
-
-## 输入
-
-UserID：String
-
-Fin：int 指完成状态 0未完成 1已完成
-
-## 输出
-
-errCode：int
-
-events：一个list，每个元素是一个dict，dict内包含：
-
-​			eventID：int
-
-​			permission int，权限，最低位为0表示不共享，为1表示共享，高位暂时空闲无用
-
-​			approve 点赞个数，目前无用
-
-​			fin 0/1
-
-​			userID string
-
-​			title string
-
-​			content string
-
-​			startTime YYYY-mm-dd
-
-​			endTime YYYY-mm-dd
-
-​	返回格式如下：{errCode:0, events:[{eventID:1, permission:0, ...}, {...}, ...]}
-
-
-
-#queryComments
-
-## 输入
-
-UserID：String
-
-## 输出
-
-errCode：int
-
-comments：一个list，每个元素是一个dict，dict内包含：
-
-​			eventID：int 事件的ID
-
-​			userID：string
-
-​			title：string 事件的标题
-
-​			content：string
-
-
-
-# queryNearby
-
-查询你好友的共享事件
-
-## 输入
-
-UserID：String
-
-## 输出
-
-同queryEvents
-
-
-
-# updateFriends
-
-增减朋友关系（单向朋友）
-
-## 输入
-
-userID：string 你的ID
-
-uBID：string 你要修改的朋友的ID
-
-friendStatus：int 0/1 0为删除这条朋友关系，1为增加这条朋友关系
-
-## 输出
-
-errCode
-
-
-
-# queryFriends
-
-## 输入
-
-userID：string
-
-## 输出
-
-errcode
-
-friends：list，每个元素是个dict，dict内包含
-​				uBID：你的朋友的ID
-
-
-
-# registe
-
-##输入
-
-userID：string
-
-password：string
-
-##输出
-
-errCode
-
-
-
-#logIn
-
-##输入
-
-userID：string
-
-password：string
-
-##输出
-
-使用session设置cookie，userID：userID，不过后续只有登录登出改密码系列的操作使用了cookie，其他的操作每次都直接传输userID，因此尚未直接使用到cookie
-
-errCode
-
-
-
-#logOut
-
-## 输入
-
-userID：string
-
-## 输出
-
-清除session的cookie
-
-errCode
-
-
-
-#updatePassword
-
-## 输入
-
-userID：string
-
-password：string
-
-##输出
-
-errcode

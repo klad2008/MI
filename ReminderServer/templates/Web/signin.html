@@ -17,9 +17,8 @@
             <h3>Welcome, <span>Friend</span></h3>
             <img src="images/img1.jpg" alt=""/>
             <div class="login-form">
-
-                    <input id="username" type = "text" v-model = "message" />
-                    <input id="password" type = "password" v-model = "message" />
+                    <input id="username" type = "text" placeholder = "username" v-model = "message" />
+                    <input id="password" type = "password" placeholder = "password" v-model = "message" />
         			<input id="button" v-on:click = "signin()" type="submit" value="LOGIN" />
 
     		</div>
@@ -31,10 +30,10 @@
 <script src = "https://cdn.bootcss.com/vue/2.2.2/vue.min.js"> </script>
 <script>
     var usernameData = {
-        message : "  username"
+        message : ""
     };
     var passwordData = {
-        message : "  password"
+        message : ""
     };
     var userCheck = true;
     var storage = window.localStorage;

@@ -11,7 +11,7 @@
 
 
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
 <title>About</title>
 <!--Custom Theme files-->
@@ -85,7 +85,7 @@
 					<h3>Top10 Forked 事项</h3>
 					<section class="ac-container">
 						<div v-for="item in friend">
-							<label v-on:click="itemdetail(item)" class="grid4"><i></i>{{ item }}</label>
+							<label v-on:click="itemdetail(item)" class="grid4"><i></i>{{ item[0] }}</label>
 						</div>
 					<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
@@ -104,7 +104,7 @@
 		forknum : 10,
 		friend : [ 'aaa' , 'bbb' , 'ccc' ],
 		items : [ 'aaa', 'bbb', 'ccc' ]
-	}
+	};
 	var action = {
 		getreminder: function() {
 
@@ -125,14 +125,48 @@
         },
 
 		itemdetail: function( item ) {
-			window.alert(item);
+		    storage["eventID"] = item[1];
+            window.location.href = "showreminder.html";
 		}
-    }
+    };
 
     new Vue ({
         el: '#page',
         data : pageData,
 		methods: action
+    });
+
+    $(document).ready(function(){
+        $.post("http://10.131.235.79:7900/queryTopEvents/", {},
+            function (ret) {
+                status = -1;
+                $.each(ret, function (i, field) {
+                    if (i == "errCode") {
+                        console.log(i, ' ', field);
+                        status = field;
+                    }
+                    if (i == "events") {
+                        pageData.friend = [];
+                        $.each(field, function(j, fjeld) {
+                            console.log(j, ' ', fjeld);
+                            var tmp = [];
+                            var done = 0;
+                            $.each(fjeld, function(k, fkeld) {
+                                if (k == "title") {
+                                    tmp.push(fkeld);
+                                }
+                            });
+                            $.each(fjeld, function(k, fkeld) {
+                                if (k == "eventID") {
+                                    tmp.push(fkeld);
+                                }
+                            });
+                            pageData.donenum = pageData.friend.push(tmp)
+                        });
+                    }
+                });
+            }
+        );
     })
 
 </script>
