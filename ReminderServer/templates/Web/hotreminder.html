@@ -137,7 +137,7 @@
     });
 
     $(document).ready(function(){
-        $.post("http://10.131.235.79:7900/queryTopEvents/", {},
+        $.post("http://127.0.0.1:7900/queryTopEvents/", {},
             function (ret) {
                 status = -1;
                 $.each(ret, function (i, field) {

@@ -164,7 +164,7 @@
 	else {
         eventID = storage["eventID"];
 		console.log(eventID);
-        $.post("http://10.131.235.79:7900/querySingleEvent/", {"eventID":eventID},
+        $.post("http://127.0.0.1:7900/querySingleEvent/", {"eventID":eventID},
             function(ret){
                 $.each(ret, function(i, field){
                     if (i == "errCode") {
@@ -255,7 +255,7 @@
 //                console.log(tempopen[i].value);
                 subEvents.push(tempopen[i].value);
             }
-            $.post("http://10.131.235.79:7900/createEvent/", {
+            $.post("http://127.0.0.1:7900/createEvent/", {
                         "Title":title, "UserID":JSON.stringify(userID), "EndTime":EndTime, "Share":Share, "subEvents":JSON.stringify(subEvents)
                     },
                 function(ret){
@@ -265,7 +265,7 @@
                             if (field == 0) {
                                 storage.removeItem("item");
                                 if (eventID != -1){
-                                    $.post("http://10.131.235.79:7900/addForkedTime/", {"eventID" : eventID},
+                                    $.post("http://127.0.0.1:7900/addForkedTime/", {"eventID" : eventID},
                                         function(){
                                             console.log("done");
                                         });
@@ -294,7 +294,7 @@
     });
 
     $(document).ready(function() {
-        $.post("http://10.131.235.79:7900/queryFriends/", {
+        $.post("http://127.0.0.1:7900/queryFriends/", {
                 "userID": pageData.username
             },
             function (ret) {

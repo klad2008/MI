@@ -44,7 +44,7 @@
             console.log(usernameData.message),
             console.log(passwordData.message),
 
-            $.post("http://10.131.235.79:7900/logIn/", {"userID":usernameData.message, "password":passwordData.message},
+            $.post("http://127.0.0.1:7900/logIn/", {"userID":usernameData.message, "password":passwordData.message},
                 function(ret){
                     $.each(ret, function(i, field){
                         if (i == "errCode") {

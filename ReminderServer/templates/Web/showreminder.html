@@ -170,7 +170,7 @@
 		finish: function() {
 			var checked = window.confirm("finish?");
 			if (checked == true){
-                $.post("http://10.131.235.79:7900/finEvent/", {"eventID":pageData.eventID, "fin" : 1},
+                $.post("http://127.0.0.1:7900/finEvent/", {"eventID":pageData.eventID, "fin" : 1},
                     function(ret){
                         $.each(ret, function(i, field){
                             if (i == "errCode") {
@@ -186,7 +186,7 @@
 		restart: function() {
 			var checked = window.confirm("restart?");
 			if (checked == true){
-                $.post("http://10.131.235.79:7900/finEvent/", {"eventID":pageData.eventID, "fin" : 0},
+                $.post("http://127.0.0.1:7900/finEvent/", {"eventID":pageData.eventID, "fin" : 0},
                     function(ret){
                         $.each(ret, function(i, field){
                             if (i == "errCode") {
@@ -202,7 +202,7 @@
 		finishitem: function( item ) {
 		    subEventID = item;
             if (pageData.authority){
-                $.post("http://10.131.235.79:7900/finSubEvent/", {"subEventID":item[1], "fin" : item[2] ^ 1},
+                $.post("http://127.0.0.1:7900/finSubEvent/", {"subEventID":item[1], "fin" : item[2] ^ 1},
                     function(ret){
                         $.each(ret, function(i, field){
                             if (i == "errCode") {
@@ -233,7 +233,7 @@
     $(document).ready(function() {
         pageData.username = storage["username"];
         eventID = JSON.parse(storage["eventID"]);
-        $.post("http://10.131.235.79:7900/querySingleEvent/", {"eventID":eventID},
+        $.post("http://127.0.0.1:7900/querySingleEvent/", {"eventID":eventID},
             function(ret){
                 $.each(ret, function(i, field){
                     if (i == "errCode") {

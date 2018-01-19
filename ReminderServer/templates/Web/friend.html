@@ -146,7 +146,7 @@
 		},
 
 		addfriend: function () {
-            $.post("http://10.131.235.79:7900/updateFriends/", {"uAID": pageData.myname, "uBID":pageData.username, friendStatus : 1},
+            $.post("http://127.0.0.1:7900/updateFriends/", {"uAID": pageData.myname, "uBID":pageData.username, friendStatus : 1},
                 function (ret) {
                     $.each(ret, function (i, field) {
                         if (i == "errCode") {
@@ -159,7 +159,7 @@
         },
 
 		deletefriend: function () {
-            $.post("http://10.131.235.79:7900/updateFriends/", {"uAID": pageData.myname, "uBID":pageData.username, friendStatus : 0},
+            $.post("http://127.0.0.1:7900/updateFriends/", {"uAID": pageData.myname, "uBID":pageData.username, friendStatus : 0},
                 function (ret) {
                     $.each(ret, function (i, field) {
                         if (i == "errCode") {
@@ -178,7 +178,7 @@
 		methods: action
     });
 
-    $.post("http://10.131.235.79:7900/checkFriendStatus/", {"uAID" : pageData.myname, "uBID" : pageData.username},
+    $.post("http://127.0.0.1:7900/checkFriendStatus/", {"uAID" : pageData.myname, "uBID" : pageData.username},
         function(ret) {
             $.each(ret, function (i, field) {
                 if (i == "errCode") {
@@ -192,7 +192,7 @@
         }
     );
 
-    $.post("http://10.131.235.79:7900/queryEvents/", {"UserID": pageData.username},
+    $.post("http://127.0.0.1:7900/queryEvents/", {"UserID": pageData.username},
         function (ret) {
             $.each(ret, function (i, field) {
                 if (i == "errCode") {
