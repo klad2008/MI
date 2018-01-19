@@ -187,7 +187,7 @@ def queryTopEvents(request):
         Tmp = {}
         Tmp["eventID"] = EventTmp.eventID
         Tmp["title"] = EventTmp.title
-#        print(Tmp, EventTmp.forked)
+        print(Tmp, EventTmp.forked)
         EventsList2.append(Tmp)
 
     EventsList2 = EventsList2[:10]
