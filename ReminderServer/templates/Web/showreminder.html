@@ -201,8 +201,17 @@
 
 		finishitem: function( item ) {
 		    subEventID = item;
+		    var note = ""
+			var oDate = new Date();
+			note = " [finished] " + storage["username"] + " ";
+			note = note + oDate.getFullYear();
+			note = note + "-" + oDate.getMonth() + 1;
+			note = note + "-" + oDate.getDate() + "-";
+			note = note + oDate.getHours() + ":" + oDate.getMinutes();
+			console.log(note);
+
             if (pageData.authority){
-                $.post("http://127.0.0.1:7900/finSubEvent/", {"subEventID":item[1], "fin" : item[2] ^ 1},
+                $.post("http://127.0.0.1:7900/finSubEvent/", {"subEventID":item[1], "fin" : item[2] ^ 1, "note" : JSON.stringify(note)},
                     function(ret){
                         $.each(ret, function(i, field){
                             if (i == "errCode") {

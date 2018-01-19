@@ -1,7 +1,7 @@
 import json
 from django.shortcuts import render
 from django.http import HttpResponse
-from reminder.models import user, friend, event, comment, eventMember
+from reminder.models import user, friend, event, eventMember
 
 
 def updateFriends(request):

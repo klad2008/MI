@@ -31,8 +31,6 @@ urlpatterns = [
     url(r'^createEvent/', viewsEvent.createEvent),
     url(r'^finSubEvent/', viewsEvent.finSubEvent),
     url(r'^finEvent/', viewsEvent.finEvent),
-    url(r'^deleteEvent/', viewsEvent.deleteEvent),
-    url(r'^commentEvent/', viewsEvent.commentEvent),
     url(r'^queryEvents/', viewsEvent.queryEvents),
     url(r'^queryTopEvents/', viewsEvent.queryTopEvents),
     url(r'^querySingleEvent/', viewsEvent.querySingleEvent),
